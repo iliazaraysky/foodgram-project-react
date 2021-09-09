@@ -35,7 +35,35 @@ class Tag(models.Model):
 
 
 class Ingredient(models.Model):
-    pass
+    name = models.CharField(
+        max_length=120,
+        verbose_name='Название ингредиента',
+        help_text='Укажите название игредиента',
+        blank=True,
+        null=True,
+    )
+    amount = models.DecimalField(
+        max_digits=4,
+        decimal_places=1,
+        verbose_name='Количество',
+        help_text='Укажите количество',
+        blank=True,
+        null=True,
+    )
+    measurement_unit = models.CharField(
+        max_length=15,
+        verbose_name='Единицы измерения',
+        help_text='Укажите единицу измерения',
+        blank=True,
+        null=True,
+    )
+
+    class Meta:
+        ordering = ('name',)
+        verbose_name_plural = 'Ингридиент'
+
+    def __str__(self):
+        return self.name
 
 
 class Recipe(models.Model):
@@ -59,6 +87,7 @@ class Recipe(models.Model):
         verbose_name='Описание',
         help_text='Обязательно добавьте описание'
     )
+
     ingredients = models.ManyToManyField(
         Ingredient,
         verbose_name='Ингредиенты',
