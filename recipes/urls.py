@@ -1,8 +1,15 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from rest_framework_simplejwt.views import (TokenObtainPairView,
+                                            TokenRefreshView)
 
-from . import views
+from recipes import views
 
+
+router = DefaultRouter()
+
+app_name = 'recipe'
 
 urlpatterns = [
-    path('recipes/', views.RecipecListView.as_view())
+    path('recipes/', views.APIRecipeList.as_view()),
 ]

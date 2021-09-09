@@ -81,6 +81,13 @@ class Recipe(models.Model):
         verbose_name='Название рецепта',
         help_text='У блюда должно быть название'
     )
+    image = models.ImageField(
+        null=True,
+        blank=True,
+        upload_to='recipes_photo',
+        verbose_name='Фотография',
+        help_text='Рецепты в с фото чаще попадают в избранное'
+    )
     text = models.TextField(
         null=False,
         blank=False,

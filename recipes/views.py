@@ -1,13 +1,16 @@
-from rest_framework.response import Response
-from rest_framework.views import APIView
-
-
+from rest_framework import mixins, generics, viewsets, filters, permissions
 from recipes.models import Recipe
-from recipes.serializers import RecipeListSerializers
+from recipes.serializers import RecipeSerializer
+from django_filters.rest_framework import DjangoFilterBackend
 
 
-class RecipecListView(APIView):
-    def get(self, request):
-        recipes = Recipe.objects.filter(draft=False)
-        serializer = RecipeListSerializers(recipes, many=True)
-        return Response(serializer.data)
+class APIRecipeList(mixins.ListModelMixin,
+                    mixins.CreateModelMixin,
+                    mixins.DestroyModelMixin,
+                    generics.GenericAPIView):
+    queryset = Recipe.objects.all()
+    serializer_class = RecipeSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
