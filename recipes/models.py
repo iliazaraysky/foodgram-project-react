@@ -6,21 +6,21 @@ User = get_user_model()
 
 class Tag(models.Model):
     name = models.CharField(
-        max_length=25,
+        max_length=200,
         null=False,
         blank=False,
         verbose_name='Название тега',
         help_text='Укажите название тега'
     )
-    HEX_code = models.CharField(
-        max_length=6,
-        null=False,
-        blank=False,
+    color = models.CharField(
+        max_length=7,
+        null=True,
+        blank=True,
         verbose_name='Цвет',
         help_text='Цветовой HEX-код. 6 символов'
     )
     slug = models.SlugField(
-        max_length=45,
+        max_length=200,
         unique=True,
         verbose_name='Slug (идентификатор)',
         help_text='Slug это уникальная строка, понятная человеку'
@@ -42,14 +42,7 @@ class Ingredient(models.Model):
         blank=True,
         null=True,
     )
-    amount = models.DecimalField(
-        max_digits=4,
-        decimal_places=1,
-        verbose_name='Количество',
-        help_text='Укажите количество',
-        blank=True,
-        null=True,
-    )
+
     measurement_unit = models.CharField(
         max_length=15,
         verbose_name='Единицы измерения',
@@ -74,13 +67,19 @@ class Recipe(models.Model):
         on_delete=models.CASCADE,
         related_name='recipes'
     )
-    name = models.CharField(
-        max_length=180,
-        null=False,
-        blank=False,
-        verbose_name='Название рецепта',
-        help_text='У блюда должно быть название'
+
+    ingredients = models.ManyToManyField(
+        Ingredient,
+        verbose_name='Ингредиенты',
+        help_text='Обязательно укажите ингредиенты',
     )
+
+    tags = models.ManyToManyField(
+        Tag,
+        verbose_name='Тег',
+        help_text='Ваш рецепт будет намного проще найти, если добавить тег'
+    )
+
     image = models.ImageField(
         null=True,
         blank=True,
@@ -88,6 +87,15 @@ class Recipe(models.Model):
         verbose_name='Фотография',
         help_text='Рецепты в с фото чаще попадают в избранное'
     )
+
+    name = models.CharField(
+        max_length=180,
+        null=False,
+        blank=False,
+        verbose_name='Название рецепта',
+        help_text='У блюда должно быть название'
+    )
+
     text = models.TextField(
         null=False,
         blank=False,
@@ -95,15 +103,12 @@ class Recipe(models.Model):
         help_text='Обязательно добавьте описание'
     )
 
-    ingredients = models.ManyToManyField(
-        Ingredient,
-        verbose_name='Ингредиенты',
-        help_text='Обязательно укажите ингредиенты',
-    )
-    tag = models.ManyToManyField(
-        Tag,
-        verbose_name='Тег',
-        help_text='Ваш рецепт будет намного проще найти, если добавить тег'
+    cooking_time = models.PositiveIntegerField(
+        null=False,
+        blank=False,
+        default=1,
+        verbose_name='Время приготовления',
+        help_text='Время приготовления не может быть равным 0'
     )
 
     class Meta:
@@ -111,3 +116,27 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class OnRecipe(models.Model):
+    ingredient = models.ForeignKey(
+        Ingredient,
+        on_delete=models.CASCADE,
+        null=False,
+        blank=False,
+        verbose_name='Ингредиент'
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        verbose_name='Рецепт',
+    )
+
+    amount = models.DecimalField(
+        max_digits=4,
+        decimal_places=1,
+        verbose_name='Количество',
+        help_text='Укажите количество',
+        blank=True,
+        null=True,
+    )

@@ -12,4 +12,6 @@ app_name = 'recipe'
 
 urlpatterns = [
     path('recipes/', views.APIRecipeList.as_view()),
+    path('tags/', views.APITagList.as_view()),
+    path('ingredients/', views.APIIngredientsList.as_view()),
 ]
