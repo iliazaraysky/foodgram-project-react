@@ -1,4 +1,5 @@
 from rest_framework import generics, permissions
+from rest_framework.pagination import PageNumberPagination
 from recipes.models import Recipe, Tag, Ingredient
 from recipes.serializers import (RecipeDetailSerializer,
                                  RecipeListSerializer,
@@ -19,6 +20,7 @@ class APIRecipeList(generics.ListAPIView):
     queryset = Recipe.objects.all()
     serializer_class = RecipeListSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    pagination_class = PageNumberPagination
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
