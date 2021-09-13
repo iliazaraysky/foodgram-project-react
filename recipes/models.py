@@ -40,7 +40,6 @@ class Ingredient(models.Model):
         max_length=120,
         verbose_name='Название ингредиента',
         help_text='Укажите название игредиента',
-        unique=True,
         null=True
     )
 
@@ -122,14 +121,12 @@ class Recipe(models.Model):
 class RecipeIngredient(models.Model):
     ingredient = models.ForeignKey(
         Ingredient,
-        related_name='ingredient_for_recipe',
         on_delete=models.CASCADE,
         verbose_name='Ингредиент'
     )
 
     recipe = models.ForeignKey(
         Recipe,
-        related_name='recipe_for_ingredient',
         on_delete=models.CASCADE,
         verbose_name='Рецепт'
     )

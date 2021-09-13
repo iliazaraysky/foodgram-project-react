@@ -676,10 +676,6 @@
     "measurement_unit": "г"
   },
   {
-    "name": "Буррата",
-    "measurement_unit": "г"
-  },
-  {
     "name": "буряк",
     "measurement_unit": "г"
   },
@@ -1058,10 +1054,6 @@
   {
     "name": "гаспачо",
     "measurement_unit": "г"
-  },
-  {
-    "name": "гастропаб",
-    "measurement_unit": ""
   },
   {
     "name": "гвоздика",
@@ -3425,7 +3417,7 @@
   },
   {
     "name": "лимоны сушеные",
-    "measurement_unit": ""
+    "measurement_unit": "г"
   },
   {
     "name": "лингвине",
@@ -4705,7 +4697,7 @@
   },
   {
     "name": "орехи пекан засахаренные",
-    "measurement_unit": ""
+    "measurement_unit": "г"
   },
   {
     "name": "орехи пинии",
@@ -4786,10 +4778,6 @@
   {
     "name": "панеттоне",
     "measurement_unit": "шт."
-  },
-  {
-    "name": "Панифарин",
-    "measurement_unit": "г"
   },
   {
     "name": "панчетта",

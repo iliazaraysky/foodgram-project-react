@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from recipes.models import Recipe, Tag, Ingredient
+from recipes.models import Recipe, Tag, Ingredient, RecipeIngredient
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -15,18 +15,6 @@ class RepresentTags(serializers.SlugRelatedField):
     def to_representation(self, obj):
         serializer = TagSerializer(obj)
         return serializer.data
-
-
-class RepresentIngredients(serializers.SlugRelatedField):
-    def to_representation(self, obj):
-        serializer = IngredientSerializer(obj)
-        return serializer.data
-
-
-class IngredientSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Ingredient
-        fields = '__all__'
 
 
 class AuthorSerializer(serializers.ModelSerializer):
@@ -48,6 +36,17 @@ class TagSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'color', 'slug')
 
 
+class IngredientSerializer(serializers.HyperlinkedModelSerializer):
+    name = serializers.ReadOnlyField(source='ingredient.name')
+    measurement_unit = serializers.ReadOnlyField(
+        source='ingredient.measurement_unit'
+    )
+
+    class Meta:
+        model = RecipeIngredient
+        fields = ('name', 'measurement_unit', 'amount')
+
+
 class RecipeListSerializer(serializers.ModelSerializer):
     author = RepresentAuthor(
         slug_field='id',
@@ -62,10 +61,8 @@ class RecipeListSerializer(serializers.ModelSerializer):
         many=True
     )
 
-    ingredients = RepresentIngredients(
-        slug_field='id',
-        queryset=Ingredient.objects.all(),
-        required=False,
+    ingredients = IngredientSerializer(
+        source='recipeingredient_set',
         many=True
     )
 
