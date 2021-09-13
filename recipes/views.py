@@ -8,18 +8,20 @@ from recipes.serializers import (RecipeDetailSerializer,
                                  IngredientsDetailSerializer,
                                  IngredientsListSerializer)
 
+from recipes.permissions import IsAdminOrReadOnly
+
 
 class APIRecipeDetail(generics.RetrieveAPIView):
     queryset = Recipe.objects.all()
     serializer_class = RecipeDetailSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
     lookup_field = 'pk'
 
 
 class APIRecipeList(generics.ListAPIView):
     queryset = Recipe.objects.all()
     serializer_class = RecipeListSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
     pagination_class = PageNumberPagination
 
     def get(self, request, *args, **kwargs):
@@ -29,24 +31,44 @@ class APIRecipeList(generics.ListAPIView):
 class APITagDetail(generics.RetrieveAPIView):
     queryset = Tag.objects.all()
     serializer_class = TagDetailSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
     lookup_field = 'pk'
 
 
-class APITagList(generics.ListAPIView):
+class APITagList(generics.ListCreateAPIView):
     queryset = Tag.objects.all()
     serializer_class = TagListSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = (IsAdminOrReadOnly, )
+
+    def get_serializer(self, *args, **kwargs):
+        if 'data' in kwargs:
+            data = kwargs['data']
+            if isinstance(data, list):
+                kwargs['many'] = True
+        return super(APITagList, self).get_serializer(*args, **kwargs)
+
+    class Meta:
+        ordering = ('id', )
 
 
 class APIIngredientsDetail(generics.RetrieveAPIView):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientsDetailSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = (IsAdminOrReadOnly, )
     lookup_field = 'pk'
 
 
-class APIIngredientsList(generics.ListAPIView):
+class APIIngredientsList(generics.ListCreateAPIView):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientsListSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = (IsAdminOrReadOnly, )
+
+    def get_serializer(self, *args, **kwargs):
+        if 'data' in kwargs:
+            data = kwargs['data']
+            if isinstance(data, list):
+                kwargs['many'] = True
+        return super(APIIngredientsList, self).get_serializer(*args, **kwargs)
+
+    class Meta:
+        ordering = ('id', )

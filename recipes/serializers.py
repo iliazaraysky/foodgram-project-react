@@ -28,6 +28,7 @@ class IngredientSerializer(serializers.ModelSerializer):
         model = Ingredient
         fields = '__all__'
 
+
 class AuthorSerializer(serializers.ModelSerializer):
     class Meta:
         model = User

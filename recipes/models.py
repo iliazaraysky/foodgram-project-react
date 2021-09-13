@@ -7,8 +7,9 @@ User = get_user_model()
 class Tag(models.Model):
     name = models.CharField(
         max_length=200,
-        null=False,
+        null=True,
         blank=False,
+        unique=True,
         verbose_name='Название тега',
         help_text='Укажите название тега'
     )
@@ -39,16 +40,15 @@ class Ingredient(models.Model):
         max_length=120,
         verbose_name='Название ингредиента',
         help_text='Укажите название игредиента',
-        blank=True,
-        null=True,
+        unique=True,
+        null=True
     )
 
     measurement_unit = models.CharField(
         max_length=15,
         verbose_name='Единицы измерения',
         help_text='Укажите единицу измерения',
-        blank=True,
-        null=True,
+        null=True
     )
 
     class Meta:
@@ -70,6 +70,7 @@ class Recipe(models.Model):
 
     ingredients = models.ManyToManyField(
         Ingredient,
+        through='RecipeIngredient',
         verbose_name='Ингредиенты',
         help_text='Обязательно укажите ингредиенты',
     )
@@ -97,17 +98,17 @@ class Recipe(models.Model):
     )
 
     text = models.TextField(
-        null=False,
+        null=True,
         blank=False,
         verbose_name='Описание',
         help_text='Обязательно добавьте описание'
     )
 
     cooking_time = models.PositiveIntegerField(
-        null=False,
+        null=True,
         blank=False,
         default=1,
-        verbose_name='Время приготовления',
+        verbose_name='Время приготовления в минутах',
         help_text='Время приготовления не может быть равным 0'
     )
 
@@ -118,25 +119,30 @@ class Recipe(models.Model):
         return self.name
 
 
-class OnRecipe(models.Model):
+class RecipeIngredient(models.Model):
     ingredient = models.ForeignKey(
         Ingredient,
+        related_name='ingredient_for_recipe',
         on_delete=models.CASCADE,
-        null=False,
-        blank=False,
         verbose_name='Ингредиент'
     )
+
     recipe = models.ForeignKey(
         Recipe,
+        related_name='recipe_for_ingredient',
         on_delete=models.CASCADE,
-        verbose_name='Рецепт',
+        verbose_name='Рецепт'
     )
 
     amount = models.DecimalField(
         max_digits=4,
         decimal_places=1,
         verbose_name='Количество',
-        help_text='Укажите количество',
-        blank=True,
-        null=True,
+        help_text='Укажите количество'
     )
+
+    class Meta:
+        verbose_name_plural = 'Ингридиенты в рецептах'
+
+    def __str__(self):
+        return f'{self.recipe} : {self.ingredient}'
