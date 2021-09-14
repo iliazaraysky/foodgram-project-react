@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from recipes.models import Recipe, Tag, Ingredient, RecipeIngredient
+from rest_framework.validators import UniqueTogetherValidator
+from recipes.models import Recipe, Tag, Ingredient, RecipeIngredient, Follow
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -44,7 +45,7 @@ class IngredientSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = RecipeIngredient
-        fields = ('name', 'measurement_unit', 'amount')
+        fields = ('id', 'name', 'measurement_unit', 'amount')
 
 
 class RecipeListSerializer(serializers.ModelSerializer):
@@ -65,6 +66,8 @@ class RecipeListSerializer(serializers.ModelSerializer):
         source='recipeingredient_set',
         many=True
     )
+
+    image = serializers.ImageField()
 
     class Meta:
         model = Recipe
@@ -95,3 +98,34 @@ class IngredientsListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingredient
         fields = '__all__'
+
+
+class FollowSerializer(serializers.ModelSerializer):
+    user = serializers.SlugRelatedField(
+        slug_field='username',
+        default=serializers.CurrentUserDefault(),
+        read_only=True
+    )
+    following = serializers.SlugRelatedField(
+        read_only=False,
+        queryset=User.objects.all(),
+        slug_field='username'
+    )
+
+    class Meta:
+        fields = ('user', 'following')
+        model = Follow
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Follow.objects.all(),
+                fields=('user', 'following')
+            )
+        ]
+
+    def validate_following(self, following):
+        if self.context.get('request').method == 'POST':
+            if self.context.get('request').user == following:
+                raise serializers.ValidationError(
+                    'Вы не можете подписаться на самого себя'
+                )
+        return following
