@@ -3,16 +3,49 @@ from django.contrib.auth.models import User
 from rest_framework.validators import UniqueValidator
 
 
-
 class RegisterSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         max_length=254,
         required=True,
-        validators=[UniqueValidator(queryset=User.objects.all())]
+        validators=[UniqueValidator(queryset=User.objects.all())],
+        error_messages={
+            'required': 'Необходимо заполнить email',
+            'max_length': 'Недопустимое число символов. Больше 254'
+        },
     )
     password = serializers.CharField(
+        max_length=150,
         write_only=True,
-        required=True
+        required=True,
+        error_messages={
+            'required': 'Необходимо заполнить Пароль',
+            'max_length': 'Недопустимое число символов. Больше 150'
+        },
+        style={'input_style': 'password', 'placeholder': 'Password'}
+    )
+    username = serializers.CharField(
+        required=True,
+        max_length=150,
+        error_messages={
+            'required': 'Необходимо заполнить username',
+            'max_length': 'Недопустимое число символов. Больше 150'
+        },
+    )
+    first_name = serializers.CharField(
+        required=True,
+        max_length=150,
+        error_messages={
+            'required': 'Необходимо заполнить Имя',
+            'max_length': 'Недопустимое число символов. Больше 150'
+        },
+    )
+    last_name = serializers.CharField(
+        required=True,
+        max_length=150,
+        error_messages={
+            'required': 'Необходимо заполнить Фамилию',
+            'max_length': 'Недопустимое число символов. Больше 150'
+        },
     )
 
     class Meta:
@@ -24,11 +57,6 @@ class RegisterSerializer(serializers.ModelSerializer):
                   'last_name',
                   'password'
         )
-        extra_kwargs = {
-            'username': {'required': True, 'max_length': 254,},
-            'first_name': {'required': True},
-            'last_name': {'required': True}
-        }
 
     def create(self, validated_data):
         user = User.objects.create(
