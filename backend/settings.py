@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'recipes',
     'users',
     'rest_framework',
-    # 'rest_framework.authtoken',
+    'rest_framework.authtoken',
     'django_filters',
     'djoser'
 ]
@@ -148,6 +148,7 @@ REST_FRAMEWORK = {
 }
 
 DJOSER = {
+    'LOGIN_FIELD': 'email',
     'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
     'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',
     'ACTIVATION_URL': '#/activate/{uid}/{token}',

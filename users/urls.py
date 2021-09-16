@@ -8,9 +8,9 @@ from users import views
 app_name = 'users_app'
 
 urlpatterns = [
-    # path('auth/', include('djoser.urls.authtoken')),
-    path('auth/', include('djoser.urls')),
-    path('auth/', include('djoser.urls.jwt')),
-    path('users/', views.RegisterView.as_view(), name='auth_register'),
+    path('auth/', include('djoser.urls.authtoken')),
+    path('', include('djoser.urls')),
+    # path('', include('djoser.urls.jwt')),
+    #path('users/', views.RegisterView.as_view(), name='auth_register'),
 
 ]
