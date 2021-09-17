@@ -145,30 +145,6 @@ class RecipeIngredient(models.Model):
         return f'{self.recipe} : {self.ingredient}'
 
 
-class Follow(models.Model):
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='follower',
-        verbose_name='Пользователь подписан на'
-    )
-    following = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='following',
-        verbose_name='Автора'
-    )
-
-    class Meta:
-        constraints = [models.UniqueConstraint(fields=('user', 'following'),
-                                               name='Пара уникальных значений')
-                       ]
-        verbose_name_plural = 'Пользователи / Подписки'
-
-    def __str__(self):
-        return f'{self.user.name} подписан на {self.following.name}'
-
-
 class Favorite(models.Model):
     user = models.ForeignKey(
         User,

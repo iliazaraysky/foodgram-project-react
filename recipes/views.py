@@ -1,13 +1,13 @@
 from rest_framework import generics, permissions, filters
 from rest_framework.pagination import PageNumberPagination
-from recipes.models import Recipe, Tag, Ingredient, Follow
+from recipes.models import Recipe, Tag, Ingredient
 from recipes.serializers import (RecipeDetailSerializer,
                                  RecipeListSerializer,
                                  TagDetailSerializer,
                                  TagListSerializer,
                                  IngredientsDetailSerializer,
                                  IngredientsListSerializer,
-                                 FollowSerializer)
+                                 )
 
 from recipes.permissions import IsAdminOrReadOnly
 
@@ -73,18 +73,3 @@ class APIIngredientsList(generics.ListCreateAPIView):
 
     class Meta:
         ordering = ('id', )
-
-
-class APIFollow(generics.ListCreateAPIView):
-    serializer_class = FollowSerializer
-    permission_classes = (permissions.IsAuthenticated, )
-    filter_backends = (filters.SearchFilter, )
-    search_fields = ('=user__username', '=following__username', )
-
-    def get_queryset(self):
-        user_following = Follow.objects.filter(
-            follwing=self.request.user).all()
-        return user_following
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
