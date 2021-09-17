@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
+from users.models import UserCustom, Follow
 from rest_framework.validators import UniqueValidator
 
 
@@ -7,7 +8,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         max_length=254,
         required=True,
-        validators=[UniqueValidator(queryset=User.objects.all())],
+        validators=[UniqueValidator(queryset=UserCustom.objects.all())],
         error_messages={
             'required': 'Необходимо заполнить email',
             'max_length': 'Недопустимое число символов. Больше 254'
@@ -49,7 +50,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = User
+        model = UserCustom
         fields = (
             'email',
             'id',
@@ -60,7 +61,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         )
 
     def create(self, validated_data):
-        user = User.objects.create(
+        user = UserCustom.objects.create(
             username=validated_data['username'],
             email=validated_data['email'],
             first_name=validated_data['first_name'],
@@ -73,42 +74,37 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 class UserMeSerializers(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = UserCustom
         fields = ('email', 'id', 'username', 'first_name', 'last_name')
 
 
 class UserDetailSerializers(serializers.ModelSerializer):
+    is_subscribed = serializers.SerializerMethodField()
+
     class Meta:
-        model = User
-        fields = ('email', 'id', 'username', 'first_name', 'last_name', )
+        model = UserCustom
+        fields = ('email', 'id', 'username',
+                  'first_name', 'last_name', 'is_subscribed')
+
+    def get_is_subscribed(self, author):
+        follower = self.context['request'].user
+        return Follow.objects.filter(
+            author__id=author.id,
+            follower__id=follower.id,
+            ).exists()
 
 
-# class FollowSerializer(serializers.ModelSerializer):
-#     user = serializers.SlugRelatedField(
-#         slug_field='username',
-#         default=serializers.CurrentUserDefault(),
-#         read_only=True
-#     )
-#     following = serializers.SlugRelatedField(
-#         read_only=False,
-#         queryset=User.objects.all(),
-#         slug_field='username'
-#     )
-#
-#     class Meta:
-#         fields = ('user', 'following')
-#         model = Follow
-#         validators = [
-#             UniqueTogetherValidator(
-#                 queryset=Follow.objects.all(),
-#                 fields=('user', 'following')
-#             )
-#         ]
-#
-#     def validate_following(self, following):
-#         if self.context.get('request').method == 'POST':
-#             if self.context.get('request').user == following:
-#                 raise serializers.ValidationError(
-#                     'Вы не можете подписаться на самого себя'
-#                 )
-#         return following
+class FollowSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Follow
+        fields = '__all__'
+
+    def create(self, validated_data):
+        user = validated_data['user']
+        following = validated_data['following']
+
+        if user == following:
+            raise serializers.ValidationError(
+                {'message': 'Невозможно подписаться на самого себя'}
+            )
+

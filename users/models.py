@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, AbstractUser
+from django.contrib.auth.models import AbstractUser
 
 
 class UserCustom(AbstractUser):
@@ -28,26 +28,30 @@ class UserCustom(AbstractUser):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
+    class Meta:
+        verbose_name_plural = 'Пользователи'
+
 
 class Follow(models.Model):
-    user = models.ForeignKey(
+    follower = models.ForeignKey(
         UserCustom,
+        null=True,
         on_delete=models.CASCADE,
-        related_name='follower',
+        related_name='subscriptions',
         verbose_name='Пользователь подписан на'
     )
-    following = models.ForeignKey(
+    author = models.ForeignKey(
         UserCustom,
+        null=True,
         on_delete=models.CASCADE,
-        related_name='following',
         verbose_name='Автора'
     )
 
     class Meta:
-        constraints = [models.UniqueConstraint(fields=('user', 'following'),
-                                               name='Пара уникальных значений')
+        constraints = [models.UniqueConstraint(fields=('follower', 'author'),
+                                               name='unique_following')
                        ]
         verbose_name_plural = 'Пользователи / Подписки'
 
     def __str__(self):
-        return f'{self.user} подписан на {self.following}'
+        return f'{self.follower} подписан на {self.author}'
