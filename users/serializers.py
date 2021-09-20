@@ -1,5 +1,4 @@
 from rest_framework import serializers
-# from django.contrib.auth.models import User
 from users.models import UserCustom, Follow
 from rest_framework.validators import UniqueValidator
 
@@ -86,12 +85,18 @@ class UserDetailSerializers(serializers.ModelSerializer):
         fields = ('email', 'id', 'username',
                   'first_name', 'last_name', 'is_subscribed')
 
-    def get_is_subscribed(self, author):
-        follower = self.context['request'].user
-        return Follow.objects.filter(
-            author__id=author.id,
-            follower__id=follower.id,
-            ).exists()
+    # def get_is_subscribed(self, author):
+    #     follower = self.context['request'].user
+    #     return Follow.objects.filter(
+    #         author__id=author.id,
+    #         follower__id=follower.id,
+    #         ).exists()
+    def get_is_subscribed(self, obj):
+        request = self.context.get('request')
+        print('This is request: ', request)
+        if request is None or request.user.is_anonymous:
+            return False
+        return Follow.objects.filter(follower=request.user, author=obj).exists()
 
 
 class FollowSerializer(serializers.ModelSerializer):
@@ -108,3 +113,9 @@ class FollowSerializer(serializers.ModelSerializer):
                 {'message': 'Невозможно подписаться на самого себя'}
             )
 
+
+class ShowUserSubscriptionsSerializer(UserDetailSerializers):
+    class Meta:
+        model = UserCustom
+        fields = ('email', 'id', 'username',
+                  'first_name', 'last_name', 'is_subscribed')
