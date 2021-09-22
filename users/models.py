@@ -37,12 +37,13 @@ class Follow(models.Model):
         UserCustom,
         null=True,
         on_delete=models.CASCADE,
-        related_name='subscriptions',
+        related_name='userFollower',
         verbose_name='Пользователь подписан на'
     )
     author = models.ForeignKey(
         UserCustom,
         null=True,
+        related_name='userFollowing',
         on_delete=models.CASCADE,
         verbose_name='Автора'
     )

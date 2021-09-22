@@ -1,6 +1,6 @@
 from rest_framework import generics, permissions, filters
 from rest_framework.pagination import PageNumberPagination
-from recipes.models import Recipe, Tag, Ingredient
+from recipes.models import Recipe, Tag, Ingredient, Favorite
 from recipes.serializers import (RecipeDetailSerializer,
                                  RecipeListSerializer,
                                  TagDetailSerializer,
@@ -12,14 +12,14 @@ from recipes.serializers import (RecipeDetailSerializer,
 from recipes.permissions import IsAdminOrReadOnly
 
 
-class APIRecipeDetail(generics.RetrieveAPIView):
+class APIRecipeDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Recipe.objects.all()
     serializer_class = RecipeDetailSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
     lookup_field = 'pk'
 
 
-class APIRecipeList(generics.ListAPIView):
+class APIRecipeList(generics.ListCreateAPIView):
     queryset = Recipe.objects.all()
     serializer_class = RecipeListSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly, )

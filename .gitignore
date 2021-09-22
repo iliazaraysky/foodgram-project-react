@@ -133,3 +133,9 @@ dmypy.json
 
 # .idea
 .idea
+
+# VSCode
+.vscode
+
+# OSX Files
+.DS_Store

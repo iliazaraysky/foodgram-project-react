@@ -1,6 +1,13 @@
+from django.db.models import fields
 from rest_framework import serializers
+from rest_framework.generics import get_object_or_404
 from users.models import UserCustom, Follow
 from rest_framework.validators import UniqueValidator
+from django.contrib.auth import get_user_model
+from recipes.models import Recipe
+
+
+User = get_user_model()
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -85,12 +92,6 @@ class UserDetailSerializers(serializers.ModelSerializer):
         fields = ('email', 'id', 'username',
                   'first_name', 'last_name', 'is_subscribed')
 
-    # def get_is_subscribed(self, author):
-    #     follower = self.context['request'].user
-    #     return Follow.objects.filter(
-    #         author__id=author.id,
-    #         follower__id=follower.id,
-    #         ).exists()
     def get_is_subscribed(self, obj):
         request = self.context.get('request')
         print('This is request: ', request)
@@ -99,23 +100,28 @@ class UserDetailSerializers(serializers.ModelSerializer):
         return Follow.objects.filter(follower=request.user, author=obj).exists()
 
 
-class FollowSerializer(serializers.ModelSerializer):
+class ShowSubscriptionRecipeSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Follow
-        fields = '__all__'
-
-    def create(self, validated_data):
-        user = validated_data['user']
-        following = validated_data['following']
-
-        if user == following:
-            raise serializers.ValidationError(
-                {'message': 'Невозможно подписаться на самого себя'}
-            )
+        model = Recipe
+        fields = ('id', 'name', 'image', 'cooking_time')
 
 
 class ShowUserSubscriptionsSerializer(UserDetailSerializers):
+    recipes = serializers.SerializerMethodField()
+    recipes_count = serializers.SerializerMethodField()
+
+
     class Meta:
-        model = UserCustom
+        model = User
         fields = ('email', 'id', 'username',
-                  'first_name', 'last_name', 'is_subscribed')
+                  'first_name', 'last_name',
+                  'is_subscribed', 'recipes',
+                  'recipes_count')
+    
+    def get_recipes(self, obj):
+        recipes = obj.recipes.all()
+        return ShowSubscriptionRecipeSerializer(recipes, many=True).data
+    
+    def get_recipes_count(self, obj):
+        queryset = Recipe.objects.filter(author=obj)
+        return queryset.count()
