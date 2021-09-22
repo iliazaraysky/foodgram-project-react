@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.db.models import constraints
 
 User = get_user_model()
 
@@ -157,6 +158,7 @@ class Favorite(models.Model):
         on_delete=models.CASCADE,
         verbose_name='рецепт'
     )
+    
 
     class Meta:
         verbose_name = 'Избранное'
@@ -165,10 +167,30 @@ class Favorite(models.Model):
             models.UniqueConstraint(fields=('user', 'favorite_recipe'),
                                     name='Пара уникальных значений. Избранное')
             ]
-        verbose_name_plural = 'Пользователи / Избранное'
+        verbose_name_plural = 'Пользователь / Избранные рецепты'
 
     def __str__(self):
-        return f'{self.user.name} в избранном {self.favorite_recipe.name}'
+        return f'{self.user} в избранном {self.favorite_recipe}'
 
 
+class ShoppingCart(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Пользователь'
+    )
 
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        verbose_name='Рецепт'
+    )
+
+    class Meta:
+        verbose_name_plural = 'Список покупок',
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'recipe'],
+                name='uniq_obj_in_shopping_cart'
+            )
+        ]

@@ -1,7 +1,8 @@
 from django.core import exceptions
+from django.http import request
 from rest_framework import fields, serializers
 from rest_framework.validators import UniqueTogetherValidator
-from recipes.models import Recipe, Tag, Ingredient, RecipeIngredient
+from recipes.models import Favorite, Recipe, Tag, Ingredient, RecipeIngredient
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -55,21 +56,20 @@ class AuthorSerializer(serializers.ModelSerializer):
 
 
 class RecipeDetailSerializer(serializers.ModelSerializer):
-    
-    name = serializers.CharField()
+    is_favorited = serializers.SerializerMethodField()
 
     class Meta:
         model = Recipe
         fields = '__all__'
-
-    def get_fields(self, *args, **kwargs):
-        fields = super(RecipeDetailSerializer, self).get_fields(*args, **kwargs)
-        request = self.context.get('request', None)
-        if request and getattr(request, 'method', None) == 'PUT':
-            fields['name'].required = False
-            fields['author'].required = False
-            fields['tags'].required = False
-        return fields
+    
+    def get_is_favorited(self, obj):
+        request = self.context.get('request')
+        if request is None:
+            return False
+        return Favorite.objects.filter(
+            user=request.user,
+            favorite_recipe=obj
+        ).exists()
 
 
 class TagSerializer(serializers.ModelSerializer):
