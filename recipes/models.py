@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import constraints
+from django.core.validators import MinValueValidator
 
 User = get_user_model()
 
@@ -132,11 +133,10 @@ class RecipeIngredient(models.Model):
         verbose_name='Рецепт'
     )
 
-    amount = models.DecimalField(
-        max_digits=4,
-        decimal_places=1,
-        verbose_name='Количество',
-        help_text='Укажите количество'
+    amount = models.PositiveIntegerField(
+        validators=[MinValueValidator(0), ],
+        null = True,
+        blank = True
     )
 
     class Meta:
@@ -187,10 +187,12 @@ class ShoppingCart(models.Model):
     )
 
     class Meta:
-        verbose_name_plural = 'Список покупок',
+
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'recipe'],
                 name='uniq_obj_in_shopping_cart'
             )
         ]
+        verbose_name = 'Список покупок'
+        verbose_name_plural='Список покупок'

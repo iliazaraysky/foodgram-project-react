@@ -11,19 +11,13 @@ from recipes.serializers import (RecipeDetailSerializer,
                                  IngredientsListSerializer,
                                  )
 
-from recipes.permissions import IsAdminOrReadOnly
+from recipes.permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
 from django.shortcuts import get_object_or_404
 
 
-# class APIRecipeDetail(generics.RetrieveUpdateDestroyAPIView):
-#     queryset = Recipe.objects.all()
-#     serializer_class = RecipeDetailSerializer
-#     permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
-#     lookup_field = 'pk'
-
 class APIRecipe(viewsets.ModelViewSet):
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
     serializer_class = RecipeDetailSerializer
+    permission_classes = (IsAuthorOrReadOnly, )
 
     def get_queryset(self):
         queryset = Recipe.objects.all()
@@ -33,7 +27,6 @@ class APIRecipe(viewsets.ModelViewSet):
         detail=True,
         methods=['GET', 'DELETE'],
         url_path='favorite',
-        permission_classes=[permissions.IsAuthenticated]
     )
     def favorite(self, request, pk):
         if request.method == 'GET':
@@ -51,16 +44,6 @@ class APIRecipe(viewsets.ModelViewSet):
             )
             favorite_recipe.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class APIRecipeList(generics.ListCreateAPIView):
-    queryset = Recipe.objects.all()
-    serializer_class = RecipeListSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly, )
-    pagination_class = PageNumberPagination
-
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
 
 
 class APITagDetail(generics.RetrieveAPIView):
