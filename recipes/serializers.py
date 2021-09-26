@@ -1,13 +1,10 @@
-import recipes
-from django.core import exceptions
-from django.http import request
 from django.shortcuts import get_object_or_404
-from rest_framework import fields, serializers
-from rest_framework.validators import UniqueTogetherValidator
+from rest_framework import serializers
 from recipes.models import Favorite, Recipe, ShoppingCart, Tag, Ingredient, RecipeIngredient
 from django.contrib.auth import get_user_model
 from users.serializers import UserDetailSerializers
 from drf_extra_fields.fields import Base64ImageField
+
 User = get_user_model()
 
 
