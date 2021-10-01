@@ -16,7 +16,7 @@ User = get_user_model()
 class CustomUserViewSet(UserViewSet):
     serializer_class = CustomUserSerializer
 
-    @action(detail=True, permission_classes=(permissions.AllowAny, ))
+    @action(detail=True, permission_classes=(permissions.IsAuthenticated, ))
     def subscribe(self, request, id=None):
         data = {
             'follower': request.user.id,

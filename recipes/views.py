@@ -21,7 +21,7 @@ class APIIngredients(mixins.ListModelMixin,
     queryset = Ingredient.objects.all()
     serializer_class = IngredientsDetailSerializer
     pagination_class = None
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (IsAuthorOrReadOnly,)
     filter_backends = (IngredientFilter,)
     search_fields = ['^name']
 
@@ -31,13 +31,13 @@ class APITags(mixins.ListModelMixin,
               viewsets.GenericViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagDetailSerializer
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (IsAuthorOrReadOnly,)
     pagination_class = None
 
 
 class APIRecipe(viewsets.ModelViewSet):
     serializer_class = RecipeDetailSerializer
-    permission_classes = (permissions.AllowAny, )
+    permission_classes = (IsAuthorOrReadOnly, )
     filter_class = RecipeFilter
     queryset = Recipe.objects.all()
 
