@@ -25,11 +25,16 @@ class UserCustom(AbstractUser):
         verbose_name='Электронная почта',
         unique=True
     )
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ('first_name', 'last_name', 'username')
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = 'Пользователи'
+
+    def __str__(self):
+        return self.username
 
 
 class Follow(models.Model):

@@ -1,6 +1,5 @@
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.db.models import constraints
 from django.core.validators import MinValueValidator
 
 User = get_user_model()
@@ -134,9 +133,9 @@ class RecipeIngredient(models.Model):
     )
 
     amount = models.PositiveIntegerField(
-        validators=[MinValueValidator(0), ],
-        null = True,
-        blank = True
+        validators=[MinValueValidator(1)],
+        null=True,
+        blank=True
     )
 
     class Meta:
@@ -158,7 +157,6 @@ class Favorite(models.Model):
         on_delete=models.CASCADE,
         verbose_name='рецепт'
     )
-    
 
     class Meta:
         verbose_name = 'Избранное'
@@ -195,4 +193,4 @@ class ShoppingCart(models.Model):
             )
         ]
         verbose_name = 'Список покупок'
-        verbose_name_plural='Список покупок'
+        verbose_name_plural = 'Список покупок'
