@@ -1,8 +1,10 @@
 from rest_framework import permissions, status
 from rest_framework.response import Response
-from users.serializers import (CustomUserSerializer,
-                               SubCreateSerializer,
-                               FollowSerializer)
+from users.serializers import (
+    CustomUserSerializer,
+    SubCreateSerializer,
+    FollowSerializer
+)
 from users.models import Follow, UserCustom
 from djoser.views import UserViewSet
 from rest_framework.decorators import action

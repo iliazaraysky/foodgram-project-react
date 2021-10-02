@@ -29,8 +29,8 @@ class Tag(models.Model):
     )
 
     class Meta:
-        ordering = ('name',)
-        verbose_name_plural = 'Тег'
+        ordering = ('name', )
+        verbose_name_plural = 'Теги'
 
     def __str__(self):
         return self.name
@@ -52,8 +52,8 @@ class Ingredient(models.Model):
     )
 
     class Meta:
-        ordering = ('name',)
-        verbose_name_plural = 'Ингридиент'
+        ordering = ('name', )
+        verbose_name_plural = 'Ингридиенты'
 
     def __str__(self):
         return self.name
@@ -65,7 +65,8 @@ class Recipe(models.Model):
         null=False,
         blank=False,
         on_delete=models.CASCADE,
-        related_name='recipes'
+        related_name='recipes',
+        verbose_name='Автор рецепта',
     )
 
     ingredients = models.ManyToManyField(
@@ -86,7 +87,7 @@ class Recipe(models.Model):
         blank=True,
         upload_to='recipes_photo',
         verbose_name='Фотография',
-        help_text='Рецепты в с фото чаще попадают в избранное'
+        help_text='Рецепты с фото чаще попадают в избранное'
     )
 
     name = models.CharField(
@@ -113,6 +114,7 @@ class Recipe(models.Model):
     )
 
     class Meta:
+        ordering = ('name',)
         verbose_name_plural = 'Рецепты'
 
     def __str__(self):
@@ -135,10 +137,12 @@ class RecipeIngredient(models.Model):
     amount = models.PositiveIntegerField(
         validators=[MinValueValidator(1)],
         null=True,
-        blank=True
+        blank=True,
+        verbose_name='Колличество'
     )
 
     class Meta:
+        ordering = ('recipe',)
         verbose_name_plural = 'Ингридиенты в рецептах'
 
     def __str__(self):
@@ -165,7 +169,7 @@ class Favorite(models.Model):
             models.UniqueConstraint(fields=('user', 'favorite_recipe'),
                                     name='Пара уникальных значений. Избранное')
             ]
-        verbose_name_plural = 'Пользователь / Избранные рецепты'
+        verbose_name_plural = 'Избранные рецепты пользователей'
 
     def __str__(self):
         return f'{self.user} в избранном {self.favorite_recipe}'
@@ -188,9 +192,12 @@ class ShoppingCart(models.Model):
 
         constraints = [
             models.UniqueConstraint(
-                fields=['user', 'recipe'],
+                fields=('user', 'recipe'),
                 name='uniq_obj_in_shopping_cart'
             )
         ]
         verbose_name = 'Список покупок'
         verbose_name_plural = 'Список покупок'
+
+    def __str__(self):
+        return f'{self.recipe} в корзине пользователя {self.user}'

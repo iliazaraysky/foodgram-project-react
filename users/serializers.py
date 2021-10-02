@@ -62,12 +62,12 @@ class SubCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Follow
-        fields = ('follower', 'author')
+        fields = ['follower', 'author']
         validators = [
             UniqueTogetherValidator(
                 queryset=Follow.objects.all(),
                 fields=('follower', 'author'),
-                message=('Подписка на этого автора уже оформлена')
+                message='Подписка на этого автора уже оформлена'
             )
         ]
 

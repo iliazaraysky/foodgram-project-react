@@ -1,11 +1,13 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
-from recipes.models import (Favorite,
-                            Recipe,
-                            ShoppingCart,
-                            Tag,
-                            Ingredient,
-                            RecipeIngredient)
+from recipes.models import (
+    Favorite,
+    Recipe,
+    ShoppingCart,
+    Tag,
+    Ingredient,
+    RecipeIngredient
+)
 from django.contrib.auth import get_user_model
 from users.serializers import CustomUserSerializer
 from drf_extra_fields.fields import Base64ImageField
@@ -63,9 +65,11 @@ class RecipeDetailSerializer(serializers.ModelSerializer):
     )
 
     cooking_time = serializers.IntegerField(
-        validators=[MinValueValidator(
-            limit_value=1,
-            message='Время приготовления не может быть меньше 1')]
+        validators=[
+            MinValueValidator(
+                limit_value=1,
+                message='Время приготовления не может быть меньше 1')
+        ]
     )
 
     class Meta:
@@ -185,7 +189,7 @@ class CartCreateSerializer(serializers.ModelSerializer):
         validators = [
             UniqueTogetherValidator(
                 queryset=ShoppingCart.objects.all(),
-                fields=('user', 'recipe'),
+                fields=['user', 'recipe'],
                 message='Этот рецепт уже в корзинe'
             )
         ]

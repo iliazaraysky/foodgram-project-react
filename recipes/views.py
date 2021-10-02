@@ -3,14 +3,21 @@ from django.http.response import HttpResponse
 from rest_framework import permissions, status, viewsets, mixins
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from recipes.models import (Recipe, RecipeIngredient,
-                            Tag, Ingredient,
-                            Favorite, ShoppingCart)
-from recipes.serializers import (IngredientsDetailSerializer,
-                                 TagDetailSerializer,
-                                 RecipeDetailSerializer,
-                                 FavoriteCreateSerializer,
-                                 CartCreateSerializer)
+from recipes.models import (
+    Recipe,
+    RecipeIngredient,
+    Tag,
+    Ingredient,
+    Favorite,
+    ShoppingCart
+)
+from recipes.serializers import (
+    IngredientsDetailSerializer,
+    TagDetailSerializer,
+    RecipeDetailSerializer,
+    FavoriteCreateSerializer,
+    CartCreateSerializer
+)
 from recipes.permissions import IsAuthorOrReadOnly
 from django.shortcuts import get_object_or_404
 
@@ -41,6 +48,7 @@ class APIRecipe(viewsets.ModelViewSet):
     filter_class = RecipeFilter
     queryset = Recipe.objects.all()
 
+
     @action(detail=True, permission_classes=(permissions.IsAuthenticated,))
     def favorite(self, request, pk=None):
         data = {
@@ -56,10 +64,12 @@ class APIRecipe(viewsets.ModelViewSet):
     @favorite.mapping.delete
     def delete_favorite(self, request, pk=None):
         user = request.user
-        Favorite.objects.filter(
+        favorite = get_object_or_404(
+            Favorite,
             user=user,
-            favorite_recipe=get_object_or_404(Recipe, id=pk)
-        ).delete()
+            favorite_recipe_id=pk
+        )
+        favorite.delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
