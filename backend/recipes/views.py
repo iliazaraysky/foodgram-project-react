@@ -3,7 +3,7 @@ from django.http.response import HttpResponse
 from rest_framework import permissions, status, viewsets, mixins
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from recipes.models import (
+from .models import (
     Recipe,
     RecipeIngredient,
     Tag,
@@ -11,14 +11,14 @@ from recipes.models import (
     Favorite,
     ShoppingCart
 )
-from recipes.serializers import (
+from .serializers import (
     IngredientsDetailSerializer,
     TagDetailSerializer,
     RecipeDetailSerializer,
     FavoriteCreateSerializer,
     CartCreateSerializer
 )
-from recipes.permissions import IsAuthorOrReadOnly
+from .permissions import IsAuthorOrReadOnly
 from django.shortcuts import get_object_or_404
 
 
