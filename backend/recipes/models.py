@@ -30,6 +30,7 @@ class Tag(models.Model):
 
     class Meta:
         ordering = ('name', )
+        verbose_name = 'Теги'
         verbose_name_plural = 'Теги'
 
     def __str__(self):
@@ -53,6 +54,7 @@ class Ingredient(models.Model):
 
     class Meta:
         ordering = ('name', )
+        verbose_name = 'Ингридиенты'
         verbose_name_plural = 'Ингридиенты'
 
     def __str__(self):
@@ -115,6 +117,7 @@ class Recipe(models.Model):
 
     class Meta:
         ordering = ('name',)
+        verbose_name = 'Рецепты'
         verbose_name_plural = 'Рецепты'
 
     def __str__(self):
@@ -135,7 +138,7 @@ class RecipeIngredient(models.Model):
     )
 
     amount = models.PositiveIntegerField(
-        validators=[MinValueValidator(1)],
+        validators=(MinValueValidator(1),),
         null=True,
         blank=True,
         verbose_name='Колличество'
@@ -164,13 +167,13 @@ class Favorite(models.Model):
     )
 
     class Meta:
-        verbose_name = 'Избранное'
         constraints = (
             models.UniqueConstraint(
                 fields=('user', 'favorite_recipe'),
                 name='Пара уникальных значений. Избранное'
             ),
         )
+        verbose_name = 'Избранное'
         verbose_name_plural = 'Избранные рецепты пользователей'
 
     def __str__(self):

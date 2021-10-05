@@ -30,6 +30,8 @@ share/python-wheels/
 *.egg
 MANIFEST
 static_files/
+data/pg_backup
+data/recipes_photo
 # PyInstaller
 #  Usually these files are written by a python script from a template
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.

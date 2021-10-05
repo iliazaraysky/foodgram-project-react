@@ -1,5 +1,6 @@
 from .filters import IngredientFilter, RecipeFilter
 from django.http.response import HttpResponse
+from django.db.models import Sum
 from rest_framework import permissions, status, viewsets, mixins
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -95,27 +96,26 @@ class APIRecipe(viewsets.ModelViewSet):
 
     @action(detail=False, permission_classes=(permissions.IsAuthenticated,))
     def download_shopping_cart(self, request):
+        shopping_list = []
         user = request.user
-        shopping_cart = user.shoppingcart_set.all()
-        shopping_cart_data = {}
-        for item_recipe in shopping_cart:
-            ingredients_from_cart = RecipeIngredient.objects.filter(
-                recipe=item_recipe.recipe
+        shopping_cart = ShoppingCart.objects.filter(user__username=user)
+        shopping_cart_data = shopping_cart.values(
+            'recipe__ingredients__name',
+            'recipe__ingredients__measurement_unit'
+        ).annotate(
+            total_amount=Sum(
+                'recipe__recipeingredient__amount'
             )
-            for ingredient_obj in ingredients_from_cart:
-                name = ingredient_obj.ingredient.name
-                amount = ingredient_obj.amount
-                measurement_unit = ingredient_obj.ingredient.measurement_unit
-                if name in shopping_cart_data:
-                    shopping_cart_data[name]['amount'] += amount
-                else:
-                    shopping_cart_data[name] = {
-                        'amount': amount,
-                        'measurement_unit': measurement_unit
-                    }
-        shopping_list = ([f'{item} - {shopping_cart_data[item]["amount"]} '
-                          f'{shopping_cart_data[item]["measurement_unit"]} \n'
-                          for item in shopping_cart_data])
+        ).order_by(
+                'recipe__ingredients__name'
+        )
+        for item in shopping_cart_data:
+            shopping_list.append(
+                f'{item["recipe__ingredients__name"]}'
+                f' {item["total_amount"]}'
+                f' {item["recipe__ingredients__measurement_unit"]} \n'
+            )
+
         response = HttpResponse(shopping_list, 'Content-Type: text/plain')
         response[
             'Content-Discription'] = 'attachment; filename="product_list.txt"'

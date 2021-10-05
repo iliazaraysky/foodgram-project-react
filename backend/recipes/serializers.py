@@ -65,11 +65,12 @@ class RecipeDetailSerializer(serializers.ModelSerializer):
     )
 
     cooking_time = serializers.IntegerField(
-        validators=[
+        validators=(
             MinValueValidator(
                 limit_value=1,
-                message='Время приготовления не может быть меньше 1')
-        ]
+                message='Время приготовления не может быть меньше 1'
+            ),
+        ),
     )
 
     class Meta:
@@ -165,13 +166,13 @@ class FavoriteCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favorite
         fields = ('user', 'favorite_recipe')
-        validators = [
+        validators = (
             UniqueTogetherValidator(
                 queryset=Favorite.objects.all(),
                 fields=('user', 'favorite_recipe'),
                 message='Этот рецепт уже в избранном'
-            )
-        ]
+            ),
+        )
 
     def to_representation(self, instance):
         request = self.context.get('request')
@@ -186,13 +187,13 @@ class CartCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShoppingCart
         fields = ('user', 'recipe')
-        validators = [
+        validators = (
             UniqueTogetherValidator(
                 queryset=ShoppingCart.objects.all(),
-                fields=['user', 'recipe'],
+                fields=('user', 'recipe'),
                 message='Этот рецепт уже в корзинe'
-            )
-        ]
+            ),
+        )
 
     def to_representation(self, instance):
         request = self.context.get('request')

@@ -31,6 +31,7 @@ class UserCustom(AbstractUser):
     is_staff = models.BooleanField(default=False)
 
     class Meta:
+        verbose_name = 'Пользователи'
         verbose_name_plural = 'Пользователи'
 
     def __str__(self):
@@ -60,6 +61,7 @@ class Follow(models.Model):
                 name='unique_following'
             ),
         )
+        verbose_name = 'Пользователи / Подписки'
         verbose_name_plural = 'Пользователи / Подписки'
 
     def __str__(self):
