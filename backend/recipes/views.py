@@ -6,7 +6,6 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import (
     Recipe,
-    RecipeIngredient,
     Tag,
     Ingredient,
     Favorite,
@@ -48,7 +47,6 @@ class APIRecipe(viewsets.ModelViewSet):
     permission_classes = (IsAuthorOrReadOnly, )
     filter_class = RecipeFilter
     queryset = Recipe.objects.all()
-
 
     @action(detail=True, permission_classes=(permissions.IsAuthenticated,))
     def favorite(self, request, pk=None):
