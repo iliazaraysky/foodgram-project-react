@@ -105,7 +105,7 @@ class APIRecipe(viewsets.ModelViewSet):
                 'recipe__recipeingredient__amount'
             )
         ).order_by(
-                'recipe__ingredients__name'
+            'recipe__ingredients__name'
         )
         for item in shopping_cart_data:
             shopping_list.append(
