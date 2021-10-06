@@ -39,6 +39,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
+          context: ./backend
           tags: nextontext/foodgram_backend:latest
   deploy:
     runs-on: ubuntu-latest
