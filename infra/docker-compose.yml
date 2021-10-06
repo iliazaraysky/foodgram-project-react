@@ -7,9 +7,7 @@ services:
     env_file:
       - ../backend/.env
   backend:
-    build:
-      context: ../backend
-      dockerfile: Dockerfile
+    image: nextontext/foodgram_backend:latest
     restart: always
     volumes:
       - static_value:/code/static/
