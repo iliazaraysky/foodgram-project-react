@@ -1,25 +1,20 @@
-from .filters import IngredientFilter, RecipeFilter
-from django.http.response import HttpResponse
 from django.db.models import Sum
-from rest_framework import permissions, status, viewsets, mixins
+from django.http.response import HttpResponse
+from django.shortcuts import get_object_or_404
+from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .models import (
-    Recipe,
-    Tag,
-    Ingredient,
-    Favorite,
-    ShoppingCart
-)
-from .serializers import (
-    IngredientsDetailSerializer,
-    TagDetailSerializer,
-    RecipeDetailSerializer,
-    FavoriteCreateSerializer,
-    CartCreateSerializer
-)
+
+from .filters import IngredientFilter, RecipeFilter
+from .models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
 from .permissions import IsAuthorOrReadOnly
-from django.shortcuts import get_object_or_404
+from .serializers import (
+    CartCreateSerializer,
+    FavoriteCreateSerializer,
+    IngredientsDetailSerializer,
+    RecipeDetailSerializer,
+    TagDetailSerializer
+)
 
 
 class APIIngredients(mixins.ListModelMixin,
@@ -44,7 +39,7 @@ class APITags(mixins.ListModelMixin,
 
 class APIRecipe(viewsets.ModelViewSet):
     serializer_class = RecipeDetailSerializer
-    permission_classes = (IsAuthorOrReadOnly, )
+    permission_classes = (IsAuthorOrReadOnly,)
     filter_class = RecipeFilter
     queryset = Recipe.objects.all()
 
