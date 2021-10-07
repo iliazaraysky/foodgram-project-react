@@ -53,6 +53,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
+            sudo docker pull nextontext/foodgram_backend:latest
             cd ${{ github.event.repository.name }}
             git pull
             cd ./backend
