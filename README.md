@@ -11,7 +11,7 @@
 5. У сервиса предусмотрена фильтрация по тегам
 6. Каждый зарегистрированный пользователь имеет возможность добавить рецепт в список покупок, а затем его скачать
 
-## Установка
+## Инструкция по установке
 1. Устанавливаем на своем компьютере docker и docker-compose
 2. Клонируем репозиторий
 ```
@@ -50,3 +50,11 @@ docker-compose exec backend python manage.py collectstatic
 ```
 docker-compose exec backend python manage.py createsuperuser
 ```
+# Требования
+[Python 3.6 +](https://www.python.org/)
+
+[Docker 20.10.8 +](https://www.docker.com/)
+
+[Docker-compose 1.29.2 +](https://docs.docker.com/compose/install/)
+
+Работает под ОС Linux, Windows, macOS, BSD
