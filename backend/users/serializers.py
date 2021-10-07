@@ -68,7 +68,7 @@ class SubCreateSerializer(serializers.ModelSerializer):
                 queryset=Follow.objects.all(),
                 fields=('follower', 'author'),
                 message='Подписка на этого автора уже оформлена'
-            )
+            ),
         )
 
     def validate(self, data):
