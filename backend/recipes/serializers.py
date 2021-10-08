@@ -92,9 +92,20 @@ class RecipeDetailSerializer(serializers.ModelSerializer):
                 recipe=obj, user=request.user).exists()
 
     def validate(self, data):
-        ingredients = self.initial_data.pop('ingredients')
+        ingredients = self.initial_data.get('ingredients')
+        image = self.initial_data.get('image')
+        if not image:
+            raise ValidationError(
+                'В рецепте должна быть фотография'
+            )
+
+        if not ingredients:
+            raise ValidationError(
+                'В рецепте должен быть минимум один игредиент'
+            )
+
         for ingredient_model in ingredients:
-            if int(ingredient_model['amount']) < 0:
+            if int(ingredient_model['amount']) <= 0:
                 raise ValidationError('Колличество ингредиента должно'
                                       'быть больше 0')
 

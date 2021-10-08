@@ -9,19 +9,25 @@ from .models import (
 )
 
 
+class IngredientInlines(admin.StackedInline):
+    model = RecipeIngredient
+    min_num = 1
+    extra = 0
+
+
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'author', )
-    list_display_links = ('id', 'name',)
-    list_filter = ('name', 'author', 'tags', )
-    search_fields = ('name', 'author', )
+    list_display_links = ('id', 'name', )
+    list_filter = ('tags', )
+    search_fields = ('name', 'author__username', 'author__email')
+    inlines = (IngredientInlines, )
 
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'slug', 'color', )
     list_display_links = ('id', 'name', )
-    search_fields = ('name', )
 
 
 @admin.register(Ingredient)
@@ -35,7 +41,6 @@ class IngredientAdmin(admin.ModelAdmin):
 class RecipeIngredientAdmin(admin.ModelAdmin):
     list_display = ('id', 'ingredient', 'recipe', 'amount', )
     list_display_links = ('id', 'ingredient', )
-    list_filter = ('ingredient', 'recipe', )
     search_fields = ('ingredient__name', )
 
 
@@ -43,7 +48,11 @@ class RecipeIngredientAdmin(admin.ModelAdmin):
 class FavoriteAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'favorite_recipe', )
     list_display_links = ('id', 'user', )
-    list_filter = ('user', 'favorite_recipe', )
+    search_fields = (
+        'user__username',
+        'user__email',
+        'favorite_recipe__name',
+    )
 
 
 @admin.register(ShoppingCart)

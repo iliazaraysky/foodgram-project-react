@@ -42,14 +42,16 @@ class Ingredient(models.Model):
         max_length=120,
         verbose_name='Название ингредиента',
         help_text='Укажите название игредиента',
-        null=True
+        null=False,
+        blank=False
     )
 
     measurement_unit = models.CharField(
         max_length=15,
         verbose_name='Единицы измерения',
         help_text='Укажите единицу измерения',
-        null=True
+        null=False,
+        blank=False
     )
 
     class Meta:
@@ -85,8 +87,8 @@ class Recipe(models.Model):
     )
 
     image = models.ImageField(
-        null=True,
-        blank=True,
+        null=False,
+        blank=False,
         upload_to='recipes_photo',
         verbose_name='Фотография',
         help_text='Рецепты с фото чаще попадают в избранное'

@@ -45,13 +45,13 @@ class ShowSubSerializer(serializers.ModelSerializer):
 
     def get_recipes(self, obj):
         limit = self.context.get('recipes_limit')
-        queryset = obj.recipe_set.all().order_by('-id')
+        queryset = obj.recipes.all().order_by('-id')
         if limit:
-            queryset = obj.recipe_set.all().order_by('-id')[:int(limit)]
+            queryset = obj.recipes.all().order_by('-id')[:int(limit)]
         return MinRecipeSerializer(queryset, many=True).data
 
     def get_recipes_count(self, obj):
-        return obj.recipe_set.count()
+        return obj.recipes.count()
 
     def get_is_subscribed(self, obj):
         return obj.userFollowing.exists()
